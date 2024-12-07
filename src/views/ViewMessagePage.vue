@@ -3,37 +3,59 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button :text="getBackButtonText()" default-href="/"></ion-back-button>
+          <ion-back-button
+            :text="getBackButtonText()"
+            default-href="/"
+          ></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true" v-if="message">
       <ion-item>
-        <ion-icon aria-hidden="true" :icon="personCircle" color="primary"></ion-icon>
+        <ion-icon
+          aria-hidden="true"
+          :icon="message.isComplete ? checkmarkCircle : warning"
+          :color="message.isComplete ? 'success' : 'warning'"
+        ></ion-icon>
         <ion-label class="ion-text-wrap">
           <h2>
-            {{ message.fromName }}
-            <span class="date">
-              <ion-note>{{ message.date }}</ion-note>
-            </span>
+            {{ message.title }}
           </h2>
-          <h3>To: <ion-note>Me</ion-note></h3>
+          <span class="date">
+            <ion-note>{{ message.date }}</ion-note>
+          </span>
+          <h3>{{ message.category }}</h3>
         </ion-label>
       </ion-item>
 
       <div class="ion-padding">
-        <h1>{{ message.subject }}</h1>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          {{ message.description }}
         </p>
       </div>
+      <ion-item >
+        <ion-buttons v-if="!message.isComplete" slot="end">
+          <ion-button color="success" @click="completeTask" >
+            Completar
+            <ion-icon slot="end" :icon="checkmark"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="danger" @click="deleteTask" >
+            Eliminar
+            <ion-icon slot="end" :icon="trashBin"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 import {
   IonBackButton,
   IonButtons,
@@ -45,18 +67,31 @@ import {
   IonNote,
   IonPage,
   IonToolbar,
-} from '@ionic/vue';
-import { personCircle } from 'ionicons/icons';
-import { getMessage } from '../data/messages';
+} from "@ionic/vue";
+import { warning, checkmarkCircle, trashBin, checkmark } from "ionicons/icons";
+import { getMessage, onDelete, onUpdate } from "../data/messages";
+import { ref } from "vue";
+import router from "@/router";
 
 const getBackButtonText = () => {
   const win = window as any;
   const mode = win && win.Ionic && win.Ionic.mode;
-  return mode === 'ios' ? 'Inbox' : '';
+  return mode === "ios" ? "Inbox" : "";
 };
 
 const route = useRoute();
-const message = getMessage(parseInt(route.params.id as string, 10));
+const message = ref(getMessage(parseInt(route.params.id as string)));
+
+const completeTask = () => {
+  const newTask = { ...message.value, isComplete: true }
+  onUpdate(newTask);
+  message.value = newTask;
+}
+
+const deleteTask = () => {
+  onDelete(message.value)
+  router.push("/")
+}
 </script>
 
 <style scoped>
@@ -72,7 +107,7 @@ ion-label {
 
 ion-item h2 {
   font-weight: 600;
-  
+
   /**
    * With larger font scales
    * the date/time should wrap to the next
