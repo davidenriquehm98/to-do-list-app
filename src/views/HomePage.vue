@@ -26,9 +26,7 @@
                   color="warning"
                 ></ion-icon>
                 <ion-label class="ion-text-wrap">
-                  <h2>
-                    Tareas Pendientes
-                  </h2>
+                  <h2>Tareas Pendientes</h2>
                   <h3>{{ getTareasPendientes() }}</h3>
                 </ion-label>
               </ion-item>
@@ -39,9 +37,7 @@
                   color="success"
                 ></ion-icon>
                 <ion-label class="ion-text-wrap">
-                  <h2>
-                    Tareas Completadas
-                  </h2>
+                  <h2>Tareas Completadas</h2>
                   <h3>{{ getTareasCompletas() }}</h3>
                 </ion-label>
               </ion-item>
@@ -153,13 +149,23 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonInput,
+  IonRadio,
+  IonRadioGroup,
+  IonTextarea
 } from "@ionic/vue";
-import { home, addCircle, library, add, warning, checkmarkCircle } from "ionicons/icons";
+import {
+  home,
+  addCircle,
+  library,
+  add,
+  warning,
+  checkmarkCircle,
+} from "ionicons/icons";
 import MessageListItem from "@/components/MessageListItem.vue";
 import { getMessages, addTask } from "@/data/messages";
 import { onUpdated, ref, defineComponent } from "vue";
 defineComponent({
-  components: { IonInput },
+  components: { IonInput, IonRadio, IonRadioGroup, IonTextarea },
 });
 
 const messages = ref(getMessages());
@@ -201,14 +207,14 @@ const updateListado = () => {
 };
 
 const getTareasPendientes = () => {
-  const tareasPen = messages.value.filter((msg) => (!msg.isComplete))
-  return tareasPen.length
-}
+  const tareasPen = messages.value.filter((msg) => !msg.isComplete);
+  return tareasPen.length;
+};
 
 const getTareasCompletas = () => {
-  const tareasCom = messages.value.filter((msg) => (msg.isComplete))
-  return tareasCom.length
-}
+  const tareasCom = messages.value.filter((msg) => msg.isComplete);
+  return tareasCom.length;
+};
 
 function getDate() {
   let today = new Date();
@@ -238,12 +244,10 @@ function getTime() {
 </script>
 
 <style scoped>
-
 ion-item ion-icon {
   font-size: 42px;
   margin-right: 8px;
 }
-
 
 ion-radio::part(container) {
   width: 30px;
