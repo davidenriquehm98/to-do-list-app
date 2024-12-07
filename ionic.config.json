@@ -1,0 +1,8 @@
+{
+  "name": "ToDoListApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite",
+  "id": "6536f402"
+}
